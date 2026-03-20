@@ -239,8 +239,8 @@ export default function Dashboard() {
             <KpiCard label="CM" value={fmt(latestDay.cm)}
               sub={latestDay.cm_pct != null ? `${latestDay.cm_pct}% of rev` : undefined}
               highlight={latestDay.cm >= 0 ? "green" : "red"} accent />
-            <KpiCard label="MER" value={latestDay.mer != null ? `${latestDay.mer}` : "—"}
-              sub={be ? `Breakeven: ≤${be.mer_breakeven} (lower=better)` : "Spend / Net Revenue"} highlight="amber" />
+            <KpiCard label="MER" value={latestDay.mer != null ? `${latestDay.mer}x` : "—"}
+              sub={be ? `Breakeven: ≥${be.mer_breakeven}x` : "Net Revenue / Ad Spend"} highlight="amber" />
             <KpiCard label="Orders" value={String(latestDay.orders)}
               sub={`Rev: ${fmt(latestDay.net_revenue)}`} />
             <KpiCard label="Ad Spend" value={fmt(latestDay.ad_spend)}
@@ -306,8 +306,8 @@ export default function Dashboard() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <p className="text-slate-400 text-xs mb-1">MER Breakeven</p>
-                    <p className="text-amber-400 font-bold text-xl">{be.mer_breakeven}</p>
-                    <p className="text-slate-600 text-xs">Need MER ≤ {be.mer_breakeven} (Spend/Rev)</p>
+                    <p className="text-amber-400 font-bold text-xl">{be.mer_breakeven}x</p>
+                    <p className="text-slate-600 text-xs">Need MER ≥ {be.mer_breakeven}x</p>
                   </div>
                   <div>
                     <p className="text-slate-400 text-xs mb-1">Avg COD%</p>
@@ -326,19 +326,19 @@ export default function Dashboard() {
                 {latestDay?.mer != null && (
                   <div className="mt-4 pt-4 border-t border-slate-700">
                     <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                      <span>Current MER (latest day with orders): <span className={latestDay.mer <= be.mer_breakeven ? "text-emerald-400" : "text-red-400"}>{latestDay.mer}</span></span>
-                      <span>Target: ≤ {be.mer_breakeven}</span>
+                      <span>Current MER (latest day with orders): <span className={latestDay.mer >= be.mer_breakeven ? "text-emerald-400" : "text-red-400"}>{latestDay.mer}x</span></span>
+                      <span>Target: ≥ {be.mer_breakeven}x</span>
                     </div>
                     <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all ${latestDay.mer <= be.mer_breakeven ? "bg-emerald-500" : "bg-red-500"}`}
+                        className={`h-full rounded-full transition-all ${latestDay.mer >= be.mer_breakeven ? "bg-emerald-500" : "bg-amber-500"}`}
                         style={{ width: `${Math.min((latestDay.mer / (be.mer_breakeven * 2)) * 100, 100)}%` }}
                       />
                     </div>
-                    <p className={`text-xs mt-1 ${latestDay.mer <= be.mer_breakeven ? "text-emerald-400" : "text-red-400"}`}>
-                      {latestDay.mer <= be.mer_breakeven
-                        ? `✅ Below breakeven — profitable (MER ${latestDay.mer} ≤ ${be.mer_breakeven})`
-                        : `⚠️ Above breakeven — spending too much vs revenue (MER ${latestDay.mer} > ${be.mer_breakeven})`}
+                    <p className={`text-xs mt-1 ${latestDay.mer >= be.mer_breakeven ? "text-emerald-400" : "text-amber-400"}`}>
+                      {latestDay.mer >= be.mer_breakeven
+                        ? `✅ Above breakeven — profitable (MER ${latestDay.mer}x ≥ ${be.mer_breakeven}x)`
+                        : `⚠️ Below breakeven — need MER ≥ ${be.mer_breakeven}x (current: ${latestDay.mer}x)`}
                     </p>
                   </div>
                 )}
@@ -393,7 +393,7 @@ export default function Dashboard() {
                         ["Ad Spend", fmt(m.ad_spend), "text-slate-300"],
                         ["CM", fmt(m.cm), cmText(m.cm) + " font-bold"],
                         ["CM%", m.cm_pct != null ? `${m.cm_pct}%` : "—", cmText(m.cm)],
-                        ["MER", m.mer != null ? `${m.mer}` : "—", "text-amber-400"],
+                        ["MER", m.mer != null ? `${m.mer}x` : "—", "text-amber-400"],
                       ].map(([lbl, val, cls]) => (
                         <>
                           <span className="text-slate-400">{lbl}</span>
@@ -416,7 +416,7 @@ export default function Dashboard() {
                   ["Orders", String(data.all_time.orders), "text-white"],
                   ["Net Revenue", fmt(data.all_time.net_revenue), "text-white"],
                   ["Total CM", fmt(data.all_time.cm), cmText(data.all_time.cm) + " font-bold"],
-                  ["MER", data.all_time.mer != null ? `${data.all_time.mer}` : "—", "text-amber-400"],
+                  ["MER", data.all_time.mer != null ? `${data.all_time.mer}x` : "—", "text-amber-400"],
                 ].map(([lbl, val, cls]) => (
                   <div key={lbl as string}>
                     <p className="text-slate-400 text-xs">{lbl}</p>
