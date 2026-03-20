@@ -1156,14 +1156,14 @@
     }
   ],
   "breakeven": {
-    "mer_breakeven": 1.7,
+    "mer_breakeven": 0.59,
     "avg_cod_pct": 32.6,
     "avg_risk_pct": 8.5,
     "avg_gp_pct": 58.9,
-    "note": "CM=0 when MER >= breakeven"
+    "note": "CM=0 when MER <= breakeven (MER = Spend/Revenue, lower=better)"
   },
   "_meta": {
-    "updated_at": "2026-03-20 21:18 GMT+7",
+    "updated_at": "2026-03-20 22:24 GMT+7",
     "adset_window": "7d",
     "adset_count": 15,
     "weekly_count": 8
