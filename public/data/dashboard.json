@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-20 22:24",
+  "generated_at": "2026-03-20 22:33",
   "all_time": {
     "label": "all_time",
     "days": 51,
@@ -13,7 +13,7 @@
     "ad_spend": 3266.47,
     "cm": -879.48,
     "cm_pct": -21.7,
-    "mer": 0.81
+    "mer": 1.24
   },
   "2026-01": {
     "label": "2026-01",
@@ -28,7 +28,7 @@
     "ad_spend": 1018.38,
     "cm": -762.73,
     "cm_pct": -188.8,
-    "mer": 2.52
+    "mer": 0.4
   },
   "2026-02": {
     "label": "2026-02",
@@ -43,7 +43,7 @@
     "ad_spend": 1016.71,
     "cm": -440.58,
     "cm_pct": -45.8,
-    "mer": 1.06
+    "mer": 0.95
   },
   "2026-03": {
     "label": "2026-03",
@@ -58,7 +58,7 @@
     "ad_spend": 1231.38,
     "cm": 323.83,
     "cm_pct": 12.1,
-    "mer": 0.46
+    "mer": 2.18
   },
   "daily": [
     {
@@ -74,7 +74,7 @@
       "ad_spend": 135.83,
       "cm": -83.05,
       "cm_pct": -105.1,
-      "mer": 1.72,
+      "mer": 0.58,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -91,7 +91,7 @@
       "ad_spend": 124.67,
       "cm": -124.67,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -108,7 +108,7 @@
       "ad_spend": 113.57,
       "cm": 35.2,
       "cm_pct": 14.8,
-      "mer": 0.48,
+      "mer": 2.1,
       "meta_purchases": 2,
       "meta_conv_value": 238.0
     },
@@ -125,7 +125,7 @@
       "ad_spend": 118.18,
       "cm": -118.18,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -142,7 +142,7 @@
       "ad_spend": 19.15,
       "cm": -19.15,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -159,7 +159,7 @@
       "ad_spend": 21.66,
       "cm": -21.66,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -176,7 +176,7 @@
       "ad_spend": 19.63,
       "cm": -19.63,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -193,7 +193,7 @@
       "ad_spend": 82.18,
       "cm": -82.18,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -210,7 +210,7 @@
       "ad_spend": 44.77,
       "cm": -44.77,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -227,7 +227,7 @@
       "ad_spend": 34.76,
       "cm": -34.76,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -244,7 +244,7 @@
       "ad_spend": 45.4,
       "cm": -45.4,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -261,7 +261,7 @@
       "ad_spend": 47.45,
       "cm": -47.45,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -278,7 +278,7 @@
       "ad_spend": 42.67,
       "cm": -42.67,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -295,7 +295,7 @@
       "ad_spend": 45.18,
       "cm": -45.18,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -312,7 +312,7 @@
       "ad_spend": 81.11,
       "cm": -27.01,
       "cm_pct": -31.0,
-      "mer": 0.93,
+      "mer": 1.07,
       "meta_purchases": 1,
       "meta_conv_value": 87.0
     },
@@ -329,7 +329,7 @@
       "ad_spend": 42.17,
       "cm": -42.17,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -346,7 +346,7 @@
       "ad_spend": 42.55,
       "cm": -42.55,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -363,7 +363,7 @@
       "ad_spend": 51.6,
       "cm": -51.6,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -380,7 +380,7 @@
       "ad_spend": 89.78,
       "cm": -59.45,
       "cm_pct": -108.1,
-      "mer": 1.63,
+      "mer": 0.61,
       "meta_purchases": 1,
       "meta_conv_value": 55.0
     },
@@ -397,7 +397,7 @@
       "ad_spend": 107.36,
       "cm": -107.36,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -414,7 +414,7 @@
       "ad_spend": 86.7,
       "cm": -86.7,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -431,7 +431,7 @@
       "ad_spend": 96.22,
       "cm": -28.57,
       "cm_pct": -26.0,
-      "mer": 0.87,
+      "mer": 1.14,
       "meta_purchases": 2,
       "meta_conv_value": 110.0
     },
@@ -448,7 +448,7 @@
       "ad_spend": 94.23,
       "cm": -12.63,
       "cm_pct": -9.0,
-      "mer": 0.67,
+      "mer": 1.49,
       "meta_purchases": 1,
       "meta_conv_value": 85.0
     },
@@ -465,7 +465,7 @@
       "ad_spend": 50.6,
       "cm": 31.0,
       "cm_pct": 22.1,
-      "mer": 0.36,
+      "mer": 2.77,
       "meta_purchases": 1,
       "meta_conv_value": 55.0
     },
@@ -482,7 +482,7 @@
       "ad_spend": 57.82,
       "cm": 3.45,
       "cm_pct": 4.1,
-      "mer": 0.68,
+      "mer": 1.47,
       "meta_purchases": 1,
       "meta_conv_value": 85.0
     },
@@ -516,7 +516,7 @@
       "ad_spend": 80.29,
       "cm": -46.47,
       "cm_pct": -84.5,
-      "mer": 1.46,
+      "mer": 0.69,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -533,7 +533,7 @@
       "ad_spend": 96.4,
       "cm": -96.4,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -550,7 +550,7 @@
       "ad_spend": 68.71,
       "cm": -34.89,
       "cm_pct": -63.4,
-      "mer": 1.25,
+      "mer": 0.8,
       "meta_purchases": 1,
       "meta_conv_value": 55.0
     },
@@ -567,7 +567,7 @@
       "ad_spend": 10.35,
       "cm": -10.35,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -584,7 +584,7 @@
       "ad_spend": 11.71,
       "cm": -11.71,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -601,7 +601,7 @@
       "ad_spend": 9.29,
       "cm": 142.93,
       "cm_pct": 53.3,
-      "mer": 0.03,
+      "mer": 28.85,
       "meta_purchases": 4,
       "meta_conv_value": 268.0
     },
@@ -618,7 +618,7 @@
       "ad_spend": 8.04,
       "cm": -8.04,
       "cm_pct": null,
-      "mer": null,
+      "mer": 0.0,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -635,7 +635,7 @@
       "ad_spend": 39.35,
       "cm": -5.53,
       "cm_pct": -10.1,
-      "mer": 0.72,
+      "mer": 1.4,
       "meta_purchases": 0,
       "meta_conv_value": 0.0
     },
@@ -652,7 +652,7 @@
       "ad_spend": 78.88,
       "cm": -48.55,
       "cm_pct": -88.3,
-      "mer": 1.43,
+      "mer": 0.7,
       "meta_purchases": 1,
       "meta_conv_value": 55.0
     },
@@ -669,7 +669,7 @@
       "ad_spend": 52.03,
       "cm": 52.41,
       "cm_pct": 28.6,
-      "mer": 0.28,
+      "mer": 3.52,
       "meta_purchases": 2,
       "meta_conv_value": 183.0
     },
@@ -686,7 +686,7 @@
       "ad_spend": 94.64,
       "cm": 6.83,
       "cm_pct": 4.1,
-      "mer": 0.57,
+      "mer": 1.74,
       "meta_purchases": 3,
       "meta_conv_value": 165.0
     },
@@ -703,7 +703,7 @@
       "ad_spend": 98.55,
       "cm": 28.3,
       "cm_pct": 11.9,
-      "mer": 0.42,
+      "mer": 2.4,
       "meta_purchases": 3,
       "meta_conv_value": 316.0
     },
@@ -754,7 +754,7 @@
       "ad_spend": 46.0,
       "cm": -12.18,
       "cm_pct": -22.1,
-      "mer": 0.84,
+      "mer": 1.2,
       "meta_purchases": 1,
       "meta_conv_value": 55.0
     },
@@ -771,7 +771,7 @@
       "ad_spend": 48.37,
       "cm": 53.1,
       "cm_pct": 32.2,
-      "mer": 0.29,
+      "mer": 3.41,
       "meta_purchases": 3,
       "meta_conv_value": 165.0
     },
@@ -788,7 +788,7 @@
       "ad_spend": 103.27,
       "cm": 4.76,
       "cm_pct": 2.7,
-      "mer": 0.59,
+      "mer": 1.7,
       "meta_purchases": 3,
       "meta_conv_value": 175.98
     },
@@ -805,7 +805,7 @@
       "ad_spend": 89.5,
       "cm": 60.45,
       "cm_pct": 21.8,
-      "mer": 0.32,
+      "mer": 3.09,
       "meta_purchases": 4,
       "meta_conv_value": 277.0
     },
@@ -822,7 +822,7 @@
       "ad_spend": 83.49,
       "cm": -48.76,
       "cm_pct": -87.1,
-      "mer": 1.49,
+      "mer": 0.67,
       "meta_purchases": 1,
       "meta_conv_value": 55.99
     },
@@ -839,7 +839,7 @@
       "ad_spend": 73.86,
       "cm": 17.84,
       "cm_pct": 10.3,
-      "mer": 0.42,
+      "mer": 2.36,
       "meta_purchases": 2,
       "meta_conv_value": 173.98
     },
@@ -856,7 +856,7 @@
       "ad_spend": 92.6,
       "cm": 18.15,
       "cm_pct": 10.1,
-      "mer": 0.52,
+      "mer": 1.93,
       "meta_purchases": 3,
       "meta_conv_value": 178.95
     },
@@ -873,7 +873,7 @@
       "ad_spend": 96.82,
       "cm": 40.16,
       "cm_pct": 16.3,
-      "mer": 0.39,
+      "mer": 2.55,
       "meta_purchases": 4,
       "meta_conv_value": 246.97
     },
@@ -890,7 +890,7 @@
       "ad_spend": 92.96,
       "cm": 195.92,
       "cm_pct": 40.2,
-      "mer": 0.19,
+      "mer": 5.24,
       "meta_purchases": 4,
       "meta_conv_value": 440.98
     },
@@ -907,7 +907,7 @@
       "ad_spend": 99.36,
       "cm": -24.65,
       "cm_pct": -19.6,
-      "mer": 0.79,
+      "mer": 1.27,
       "meta_purchases": 3,
       "meta_conv_value": 125.94
     },
@@ -924,7 +924,7 @@
       "ad_spend": 41.7,
       "cm": -14.42,
       "cm_pct": -31.4,
-      "mer": 0.91,
+      "mer": 1.1,
       "meta_purchases": 1,
       "meta_conv_value": 45.99
     }
@@ -1051,7 +1051,7 @@
       "status": "test"
     },
     {
-      "adset": "11/03/2026_DL032K",
+      "adset": "11/03/2026_DL033K",
       "spend_7d": 0.0,
       "purchases_7d": 0,
       "conv_value_7d": 0.0,
@@ -1061,7 +1061,7 @@
       "status": "test"
     },
     {
-      "adset": "11/03/2026_DL033K",
+      "adset": "11/03/2026_DL032K",
       "spend_7d": 0.0,
       "purchases_7d": 0,
       "conv_value_7d": 0.0,
@@ -1163,7 +1163,7 @@
     "note": "CM=0 when MER <= breakeven. MER = Net Revenue / Ad Spend (higher=better)"
   },
   "_meta": {
-    "updated_at": "2026-03-20 22:28 GMT+7",
+    "updated_at": "2026-03-20 22:42 GMT+7",
     "adset_window": "7d",
     "adset_count": 15,
     "weekly_count": 8
