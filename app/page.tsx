@@ -210,6 +210,52 @@ export default function Dashboard() {
     { key: "2026-01" as const, label: "Jan 2026" },
   ];
 
+  // ── Forecast calc ──────────────────────────────────────────────────────────
+  const CM_OPEX_TARGET = 5400;
+
+  // Current month actuals (March)
+  const curMonth = data["2026-03"] as MonthSummary | undefined;
+  const cmToDate = curMonth?.cm ?? 0;
+  const revToDate = curMonth?.net_revenue ?? 0;
+  const spendToDate = curMonth?.ad_spend ?? 0;
+
+  // Days remaining this month (from today)
+  const today = new Date();
+  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+  const daysRemaining = lastDayOfMonth - today.getDate(); // days after today
+  const daysPassed = today.getDate();
+
+  // 3-day rolling avg (last 3 days with orders)
+  const daysWithOrders = [...data.daily].reverse().filter((d) => d.orders > 0).slice(0, 3);
+  const avg3Rev   = daysWithOrders.length > 0 ? daysWithOrders.reduce((s, d) => s + d.net_revenue, 0) / daysWithOrders.length : 0;
+  const avg3Spend = daysWithOrders.length > 0 ? daysWithOrders.reduce((s, d) => s + d.ad_spend, 0) / daysWithOrders.length : 0;
+  const avg3CM    = daysWithOrders.length > 0 ? daysWithOrders.reduce((s, d) => s + d.cm, 0) / daysWithOrders.length : 0;
+  const avg3MER   = avg3Spend > 0 ? avg3Rev / avg3Spend : 0;
+
+  // Forecast if trend holds
+  const forecastRevAdd   = avg3Rev * daysRemaining;
+  const forecastSpendAdd = avg3Spend * daysRemaining;
+  const forecastCMAdd    = avg3CM * daysRemaining;
+  const forecastCMTotal  = cmToDate + forecastCMAdd;
+
+  // What MER do we need in remaining days to hit targets?
+  // CM_needed = target - cmToDate
+  // CM_remaining = Rev_remaining * gp_pct - Spend_remaining
+  // If we assume spend stays same (avg3Spend * daysRemaining):
+  //   Rev_needed = (CM_needed + Spend_remaining) / gp_pct
+  //   MER_needed = Rev_needed / Spend_remaining
+  const gp_pct = be ? be.avg_gp_pct / 100 : 0.59;
+
+  function neededMER(target: number) {
+    const cmNeeded = target - cmToDate;
+    const spendRemaining = avg3Spend * daysRemaining;
+    if (spendRemaining <= 0) return null;
+    const revNeeded = (cmNeeded + spendRemaining) / gp_pct;
+    return Math.round((revNeeded / spendRemaining) * 100) / 100;
+  }
+  const merNeededBreakeven = neededMER(0);
+  const merNeededOpex      = neededMER(CM_OPEX_TARGET);
+
   const effectiveCount = adsets.filter((a) => a.status === "effective").length;
   const killCount      = adsets.filter((a) => a.status === "kill").length;
   const effectiveSpend = adsets.filter((a) => a.status === "effective").reduce((s, a) => s + a.spend_7d, 0);
@@ -248,6 +294,127 @@ export default function Dashboard() {
           </div>
         </section>
       )}
+
+      {/* ── Targets & Forecast ── */}
+      <section>
+        <SectionHeader title={`📅 ${today.toLocaleString("en-US",{month:"long",year:"numeric"})} Targets`} sub={`${daysPassed} days passed · ${daysRemaining} days remaining`} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+          {/* Left: CM progress toward targets */}
+          <div className="bg-[#1c1f2e] border border-slate-700 rounded-xl p-4 space-y-4">
+            <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">CM Progress</p>
+
+            {/* Breakeven target: CM ≥ 0 */}
+            {(() => {
+              const pct = cmToDate >= 0 ? 100 : Math.max(0, Math.min(100, ((cmToDate + Math.abs(cmToDate * 2)) / Math.abs(cmToDate * 2)) * 100));
+              const hit = cmToDate >= 0;
+              return (
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-slate-400">Breakeven (CM ≥ $0)</span>
+                    <span className={hit ? "text-emerald-400" : "text-amber-400"}>
+                      {hit ? "✅ Hit" : `${fmt(cmToDate)} / $0`}
+                    </span>
+                  </div>
+                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full ${hit ? "bg-emerald-500" : "bg-amber-500"}`}
+                      style={{ width: hit ? "100%" : `${Math.max(5, Math.min(95, 100 - (Math.abs(cmToDate) / (Math.abs(cmToDate) + forecastCMAdd + 1)) * 100))}%` }} />
+                  </div>
+                  {!hit && merNeededBreakeven != null && (
+                    <p className="text-xs text-slate-500 mt-1">
+                      Need avg MER <span className="text-amber-300">{merNeededBreakeven}x</span> over {daysRemaining} remaining days
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* Opex target: CM ≥ $5,400 */}
+            {(() => {
+              const hit = cmToDate >= CM_OPEX_TARGET;
+              const pct = Math.max(0, Math.min(100, (cmToDate / CM_OPEX_TARGET) * 100));
+              return (
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-slate-400">Opex Target (CM = ${CM_OPEX_TARGET.toLocaleString()})</span>
+                    <span className={hit ? "text-emerald-400" : "text-slate-300"}>
+                      {hit ? "✅ Hit" : `${fmt(cmToDate)} / $${CM_OPEX_TARGET.toLocaleString()}`}
+                    </span>
+                  </div>
+                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full ${hit ? "bg-emerald-500" : pct > 50 ? "bg-amber-500" : "bg-slate-600"}`}
+                      style={{ width: `${Math.max(2, pct)}%` }} />
+                  </div>
+                  <div className="flex justify-between text-xs text-slate-600 mt-1">
+                    <span>{pct.toFixed(0)}% of target</span>
+                    {!hit && <span>Still need <span className="text-slate-400">{fmt(CM_OPEX_TARGET - cmToDate)}</span></span>}
+                  </div>
+                  {!hit && merNeededOpex != null && (
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Need avg MER <span className="text-amber-300">{merNeededOpex}x</span> over {daysRemaining} remaining days
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Right: 3-day rolling avg + forecast */}
+          <div className="bg-[#1c1f2e] border border-slate-700 rounded-xl p-4 space-y-3">
+            <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">3-Day Avg → Month Forecast</p>
+            <p className="text-xs text-slate-600">
+              Based on last 3 active days:{" "}
+              {daysWithOrders.map((d) => d.date.slice(5)).join(", ")}
+            </p>
+
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <p className="text-xs text-slate-500">Avg Daily Rev</p>
+                <p className="text-white font-semibold">{fmt(avg3Rev)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Avg Daily Spend</p>
+                <p className="text-slate-300 font-semibold">{fmt(avg3Spend)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Avg Daily CM</p>
+                <p className={`font-semibold ${avg3CM >= 0 ? "text-emerald-400" : "text-red-400"}`}>{fmt(avg3CM)}</p>
+              </div>
+              <div>
+                <p className="text-xs text-slate-500">Avg MER</p>
+                <p className={`font-semibold ${avg3MER >= (be?.mer_breakeven ?? 1.7) ? "text-emerald-400" : "text-amber-400"}`}>
+                  {avg3MER > 0 ? `${avg3MER.toFixed(2)}x` : "—"}
+                </p>
+              </div>
+            </div>
+
+            <div className="border-t border-slate-700 pt-3 space-y-1">
+              <p className="text-xs text-slate-400 font-medium">If trend holds ({daysRemaining}d remaining):</p>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <p className="text-xs text-slate-500">+Rev forecast</p>
+                  <p className="text-amber-300">{fmt(forecastRevAdd)}</p>
+                </div>
+                <div>
+                  <p className="text-xs text-slate-500">+Spend forecast</p>
+                  <p className="text-slate-400">{fmt(forecastSpendAdd)}</p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-xs text-slate-500">Month-end CM forecast</p>
+                  <p className={`font-bold text-lg ${forecastCMTotal >= CM_OPEX_TARGET ? "text-emerald-400" : forecastCMTotal >= 0 ? "text-amber-400" : "text-red-400"}`}>
+                    {fmt(forecastCMTotal)}
+                    {forecastCMTotal >= CM_OPEX_TARGET
+                      ? " 🎯 Opex covered!"
+                      : forecastCMTotal >= 0
+                      ? " ✅ Breakeven"
+                      : " ⚠️ Still negative"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── Tabs ── */}
       <div className="flex gap-2 border-b border-slate-700 pb-0">
