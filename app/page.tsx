@@ -204,16 +204,16 @@ export default function Dashboard() {
   const weekly    = data.weekly ?? [];
   const be        = data.breakeven;
 
-  const [rangeDays, setRangeDays] = useState(14);
-
   const months = [
     { key: "2026-03" as const, label: "Mar 2026" },
     { key: "2026-02" as const, label: "Feb 2026" },
     { key: "2026-01" as const, label: "Jan 2026" },
   ];
 
-  // Current month actuals (March)
+  // ── Forecast calc ──────────────────────────────────────────────────────────
   const CM_OPEX_TARGET = 5400;
+
+  // Current month actuals (March)
   const curMonth = data["2026-03"] as MonthSummary | undefined;
   const cmToDate = curMonth?.cm ?? 0;
   const revToDate = curMonth?.net_revenue ?? 0;
@@ -222,7 +222,7 @@ export default function Dashboard() {
   // Days remaining this month (from today)
   const today = new Date();
   const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-  const daysRemaining = lastDayOfMonth - today.getDate();
+  const daysRemaining = lastDayOfMonth - today.getDate(); // days after today
   const daysPassed = today.getDate();
 
   // 3-day rolling avg (last 3 days with orders)
@@ -238,38 +238,23 @@ export default function Dashboard() {
   const forecastCMAdd    = avg3CM * daysRemaining;
   const forecastCMTotal  = cmToDate + forecastCMAdd;
 
-  // MER needed to hit targets in remaining days
+  // What MER do we need in remaining days to hit targets?
+  // CM_needed = target - cmToDate
+  // CM_remaining = Rev_remaining * gp_pct - Spend_remaining
+  // If we assume spend stays same (avg3Spend * daysRemaining):
+  //   Rev_needed = (CM_needed + Spend_remaining) / gp_pct
+  //   MER_needed = Rev_needed / Spend_remaining
   const gp_pct = be ? be.avg_gp_pct / 100 : 0.59;
-  function calcNeededMER(target: number): number | null {
+
+  function neededMER(target: number) {
     const cmNeeded = target - cmToDate;
     const spendRemaining = avg3Spend * daysRemaining;
     if (spendRemaining <= 0) return null;
     const revNeeded = (cmNeeded + spendRemaining) / gp_pct;
     return Math.round((revNeeded / spendRemaining) * 100) / 100;
   }
-  const merNeededBreakeven = calcNeededMER(0);
-  const merNeededOpex      = calcNeededMER(CM_OPEX_TARGET);
-
-  // Breakeven progress bar widths (pre-computed to avoid IIFE in JSX)
-  const beHit = cmToDate >= 0;
-  const beBarWidth = beHit ? 100 : Math.max(5, Math.min(95, 100 - (Math.abs(cmToDate) / (Math.abs(cmToDate) + forecastCMAdd + 1)) * 100));
-  const opexHit = cmToDate >= CM_OPEX_TARGET;
-  const opexPct = Math.max(0, Math.min(100, (cmToDate / CM_OPEX_TARGET) * 100));
-
-  // Range slider computed values
-  const rangeRows  = data.daily.slice(-rangeDays);
-  const tableRows  = [...rangeRows].reverse();
-  const rNR  = rangeRows.reduce((s, d) => s + d.net_revenue, 0);
-  const rSP  = rangeRows.reduce((s, d) => s + d.ad_spend, 0);
-  const rCM  = rangeRows.reduce((s, d) => s + d.cm, 0);
-  const rGP  = rangeRows.reduce((s, d) => s + d.gross_profit, 0);
-  const rOrders = rangeRows.reduce((s, d) => s + d.orders, 0);
-  const rMER = rSP > 0 ? Math.round((rNR / rSP) * 100) / 100 : null;
-  const rGPpct = rNR > 0 ? Math.round((rGP / rNR) * 1000) / 10 : null;
-  const rCMpct = rNR > 0 ? Math.round(rCM / rNR * 1000) / 10 : null;
-  const rangeMERok = rMER != null && be != null && rMER >= be.mer_breakeven;
-  const rangeMERBarWidth = rMER != null && be != null ? Math.min((rMER / (be.mer_breakeven * 2)) * 100, 100) : 0;
-  const daysLabel = rangeDays === 3 ? "Last 3 Days" : rangeDays === 7 ? "Last 7 Days" : rangeDays === 14 ? "Last 14 Days" : `Last ${rangeDays} Days`;
+  const merNeededBreakeven = neededMER(0);
+  const merNeededOpex      = neededMER(CM_OPEX_TARGET);
 
   const effectiveCount = adsets.filter((a) => a.status === "effective").length;
   const killCount      = adsets.filter((a) => a.status === "kill").length;
@@ -320,46 +305,58 @@ export default function Dashboard() {
             <p className="text-xs text-slate-400 uppercase tracking-wider font-semibold">CM Progress</p>
 
             {/* Breakeven target: CM ≥ 0 */}
-            <div>
-              <div className="flex justify-between text-xs mb-1">
-                <span className="text-slate-400">Breakeven (CM ≥ $0)</span>
-                <span className={beHit ? "text-emerald-400" : "text-amber-400"}>
-                  {beHit ? "✅ Hit" : `${fmt(cmToDate)} / $0`}
-                </span>
-              </div>
-              <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                <div className={`h-full rounded-full ${beHit ? "bg-emerald-500" : "bg-amber-500"}`}
-                  style={{ width: `${beBarWidth}%` }} />
-              </div>
-              {!beHit && merNeededBreakeven != null && (
-                <p className="text-xs text-slate-500 mt-1">
-                  Need avg MER <span className="text-amber-300">{merNeededBreakeven}x</span> over {daysRemaining} remaining days
-                </p>
-              )}
-            </div>
+            {(() => {
+              const pct = cmToDate >= 0 ? 100 : Math.max(0, Math.min(100, ((cmToDate + Math.abs(cmToDate * 2)) / Math.abs(cmToDate * 2)) * 100));
+              const hit = cmToDate >= 0;
+              return (
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-slate-400">Breakeven (CM ≥ $0)</span>
+                    <span className={hit ? "text-emerald-400" : "text-amber-400"}>
+                      {hit ? "✅ Hit" : `${fmt(cmToDate)} / $0`}
+                    </span>
+                  </div>
+                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full ${hit ? "bg-emerald-500" : "bg-amber-500"}`}
+                      style={{ width: hit ? "100%" : `${Math.max(5, Math.min(95, 100 - (Math.abs(cmToDate) / (Math.abs(cmToDate) + forecastCMAdd + 1)) * 100))}%` }} />
+                  </div>
+                  {!hit && merNeededBreakeven != null && (
+                    <p className="text-xs text-slate-500 mt-1">
+                      Need avg MER <span className="text-amber-300">{merNeededBreakeven}x</span> over {daysRemaining} remaining days
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Opex target: CM ≥ $5,400 */}
-            <div>
-              <div className="flex justify-between text-xs mb-1">
-                <span className="text-slate-400">Opex Target (CM = ${CM_OPEX_TARGET.toLocaleString()})</span>
-                <span className={opexHit ? "text-emerald-400" : "text-slate-300"}>
-                  {opexHit ? "✅ Hit" : `${fmt(cmToDate)} / $${CM_OPEX_TARGET.toLocaleString()}`}
-                </span>
-              </div>
-              <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                <div className={`h-full rounded-full ${opexHit ? "bg-emerald-500" : opexPct > 50 ? "bg-amber-500" : "bg-slate-600"}`}
-                  style={{ width: `${Math.max(2, opexPct)}%` }} />
-              </div>
-              <div className="flex justify-between text-xs text-slate-600 mt-1">
-                <span>{opexPct.toFixed(0)}% of target</span>
-                {!opexHit && <span>Still need <span className="text-slate-400">{fmt(CM_OPEX_TARGET - cmToDate)}</span></span>}
-              </div>
-              {!opexHit && merNeededOpex != null && (
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Need avg MER <span className="text-amber-300">{merNeededOpex}x</span> over {daysRemaining} remaining days
-                </p>
-              )}
-            </div>
+            {(() => {
+              const hit = cmToDate >= CM_OPEX_TARGET;
+              const pct = Math.max(0, Math.min(100, (cmToDate / CM_OPEX_TARGET) * 100));
+              return (
+                <div>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-slate-400">Opex Target (CM = ${CM_OPEX_TARGET.toLocaleString()})</span>
+                    <span className={hit ? "text-emerald-400" : "text-slate-300"}>
+                      {hit ? "✅ Hit" : `${fmt(cmToDate)} / $${CM_OPEX_TARGET.toLocaleString()}`}
+                    </span>
+                  </div>
+                  <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full ${hit ? "bg-emerald-500" : pct > 50 ? "bg-amber-500" : "bg-slate-600"}`}
+                      style={{ width: `${Math.max(2, pct)}%` }} />
+                  </div>
+                  <div className="flex justify-between text-xs text-slate-600 mt-1">
+                    <span>{pct.toFixed(0)}% of target</span>
+                    {!hit && <span>Still need <span className="text-slate-400">{fmt(CM_OPEX_TARGET - cmToDate)}</span></span>}
+                  </div>
+                  {!hit && merNeededOpex != null && (
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Need avg MER <span className="text-amber-300">{merNeededOpex}x</span> over {daysRemaining} remaining days
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
           </div>
 
           {/* Right: 3-day rolling avg + forecast */}
@@ -468,143 +465,35 @@ export default function Dashboard() {
             </div>
           </section>
 
-          {/* Breakeven + Daily — with shared time range slider */}
-          {be && (
-            <>
-              {/* Slider control */}
-              <section>
-                <div className="flex items-center justify-between mb-2">
-                  <h2 className="text-xs text-slate-400 uppercase tracking-widest font-semibold">Time Range</h2>
-                  <span className="text-amber-400 text-sm font-semibold">{daysLabel}</span>
-                </div>
-                <div className="bg-[#1c1f2e] border border-slate-700 rounded-xl px-5 py-4">
-                  <input
-                    type="range" min={3} max={14} step={1}
-                    value={rangeDays}
-                    onChange={(e) => setRangeDays(Number(e.target.value))}
-                    className="w-full accent-amber-400 cursor-pointer"
-                  />
-                  <div className="flex justify-between text-xs text-slate-600 mt-1">
-                    <span>3 days</span>
-                    <span>7 days</span>
-                    <span>14 days</span>
-                  </div>
-                </div>
-              </section>
-
-              {/* Breakeven Tracker — range-summarized */}
-              <section>
-                <SectionHeader title={`Breakeven Tracker — ${daysLabel}`} />
-                <div className="bg-[#1c1f2e] border border-amber-700/30 rounded-xl p-4">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <p className="text-slate-400 text-xs mb-1">MER Breakeven</p>
-                      <p className="text-amber-400 font-bold text-xl">{be.mer_breakeven}x</p>
-                      <p className="text-slate-600 text-xs">Need MER ≥ {be.mer_breakeven}x</p>
-                    </div>
-                    <div>
-                      <p className="text-slate-400 text-xs mb-1">Avg COD%</p>
-                      <p className="text-slate-200 font-semibold text-xl">{be.avg_cod_pct}%</p>
-                    </div>
-                    <div>
-                      <p className="text-slate-400 text-xs mb-1">Risk & Loss%</p>
-                      <p className="text-slate-200 font-semibold text-xl">{be.avg_risk_pct}%</p>
-                    </div>
-                    <div>
-                      <p className="text-slate-400 text-xs mb-1">GP% (range)</p>
-                      <p className={`font-semibold text-xl ${rGPpct != null && rGPpct > 0 ? "text-emerald-400" : "text-red-400"}`}>
-                        {rGPpct != null ? `${rGPpct}%` : "—"}
-                      </p>
-                      <p className="text-slate-600 text-xs">Actual for {daysLabel}</p>
-                    </div>
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-slate-700">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm mb-4">
-                      <div>
-                        <p className="text-xs text-slate-500">Net Revenue</p>
-                        <p className="text-white font-semibold">{fmt(rNR)}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-500">Ad Spend</p>
-                        <p className="text-slate-300">{fmt(rSP)}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-500">CM</p>
-                        <p className={`font-semibold ${cmText(rCM)}`}>{fmt(rCM)}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-slate-500">MER (range avg)</p>
-                        <p className={`font-semibold ${rangeMERok ? "text-emerald-400" : "text-amber-400"}`}>
-                          {rMER != null ? `${rMER}x` : "—"}
-                        </p>
-                      </div>
-                    </div>
-                    {rMER != null && (
-                      <>
-                        <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                          <span>MER for {daysLabel}: <span className={rangeMERok ? "text-emerald-400" : "text-red-400"}>{rMER}x</span></span>
-                          <span>Target: ≥ {be.mer_breakeven}x</span>
-                        </div>
-                        <div className="h-2 bg-slate-800 rounded-full overflow-hidden">
-                          <div className={`h-full rounded-full transition-all ${rangeMERok ? "bg-emerald-500" : "bg-amber-500"}`}
-                            style={{ width: `${rangeMERBarWidth}%` }} />
-                        </div>
-                        <p className={`text-xs mt-1 ${rangeMERok ? "text-emerald-400" : "text-amber-400"}`}>
-                          {rangeMERok
-                            ? `✅ Above breakeven — MER ${rMER}x ≥ ${be.mer_breakeven}x`
-                            : `⚠️ Below breakeven — need MER ≥ ${be.mer_breakeven}x (current: ${rMER}x)`}
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </section>
-
-              {/* Daily Table — range rows */}
-              <section>
-                <SectionHeader title={`Daily Breakdown — ${daysLabel}`} sub={`${tableRows.length} rows`} />
-                <div className="bg-[#1c1f2e] border border-slate-700 rounded-xl overflow-x-auto">
-                  <table className="w-full text-sm min-w-[640px]">
-                    <thead>
-                      <tr className="border-b border-slate-700 text-slate-500 text-xs uppercase">
-                        {["Date","Orders","Net Rev","Ad Spend","GP%","CM","CM%","MER"].map((h) => (
-                          <th key={h} className="px-3 py-3 text-right first:text-left font-medium">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tableRows.map((row) => (
-                        <tr key={row.date} className="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors">
-                          <td className="px-3 py-2 text-slate-300 font-mono text-xs">{row.date}</td>
-                          <td className="px-3 py-2 text-right text-slate-200">{row.orders}</td>
-                          <td className="px-3 py-2 text-right text-slate-200">{fmt(row.net_revenue)}</td>
-                          <td className="px-3 py-2 text-right text-slate-400">{fmt(row.ad_spend)}</td>
-                          <td className="px-3 py-2 text-right text-slate-400">{row.gp_pct != null ? `${row.gp_pct}%` : "—"}</td>
-                          <td className={`px-3 py-2 text-right font-semibold ${cmText(row.cm)}`}>{fmt(row.cm)}</td>
-                          <td className={`px-3 py-2 text-right text-xs ${cmText(row.cm)}`}>{row.cm_pct != null ? `${row.cm_pct}%` : "—"}</td>
-                          <td className="px-3 py-2 text-right text-slate-400">{row.mer != null ? `${row.mer}x` : "—"}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                    <tfoot>
-                      <tr className="border-t border-slate-600 bg-slate-800/40 text-xs font-semibold">
-                        <td className="px-3 py-2 text-slate-400">Σ {daysLabel}</td>
-                        <td className="px-3 py-2 text-right text-slate-300">{rOrders}</td>
-                        <td className="px-3 py-2 text-right text-slate-300">{fmt(rNR)}</td>
-                        <td className="px-3 py-2 text-right text-slate-400">{fmt(rSP)}</td>
-                        <td className="px-3 py-2 text-right text-slate-400">{rGPpct != null ? `${rGPpct}%` : "—"}</td>
-                        <td className={`px-3 py-2 text-right ${cmText(rCM)}`}>{fmt(rCM)}</td>
-                        <td className={`px-3 py-2 text-right ${cmText(rCM)}`}>{rCMpct != null ? `${rCMpct}%` : "—"}</td>
-                        <td className={`px-3 py-2 text-right ${rangeMERok ? "text-emerald-400" : "text-amber-400"}`}>
-                          {rMER != null ? `${rMER}x` : "—"}
-                        </td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              </section>
-            </>
-          )}
+          {/* Daily Table */}
+          <section>
+            <SectionHeader title="Daily Breakdown — Last 14 Days" />
+            <div className="bg-[#1c1f2e] border border-slate-700 rounded-xl overflow-x-auto">
+              <table className="w-full text-sm min-w-[640px]">
+                <thead>
+                  <tr className="border-b border-slate-700 text-slate-500 text-xs uppercase">
+                    {["Date","Orders","Net Rev","Ad Spend","GP%","CM","CM%","MER"].map((h) => (
+                      <th key={h} className="px-3 py-3 text-right first:text-left font-medium">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {last14.map((row) => (
+                    <tr key={row.date} className="border-b border-slate-800/60 hover:bg-slate-800/30 transition-colors">
+                      <td className="px-3 py-2 text-slate-300 font-mono text-xs">{row.date}</td>
+                      <td className="px-3 py-2 text-right text-slate-200">{row.orders}</td>
+                      <td className="px-3 py-2 text-right text-slate-200">{fmt(row.net_revenue)}</td>
+                      <td className="px-3 py-2 text-right text-slate-400">{fmt(row.ad_spend)}</td>
+                      <td className="px-3 py-2 text-right text-slate-400">{row.gp_pct != null ? `${row.gp_pct}%` : "—"}</td>
+                      <td className={`px-3 py-2 text-right font-semibold ${cmText(row.cm)}`}>{fmt(row.cm)}</td>
+                      <td className={`px-3 py-2 text-right text-xs ${cmText(row.cm)}`}>{row.cm_pct != null ? `${row.cm_pct}%` : "—"}</td>
+                      <td className="px-3 py-2 text-right text-slate-400">{row.mer != null ? `${row.mer}x` : "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
 
           {/* Monthly Summary */}
           <section>
