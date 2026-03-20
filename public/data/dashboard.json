@@ -931,26 +931,6 @@
   ],
   "adset_summary": [
     {
-      "adset": "13/02/2026_DL016K",
-      "spend_7d": 88.98,
-      "purchases_7d": 4,
-      "conv_value_7d": 314.97,
-      "roas_7d": 3.54,
-      "cpa_7d": 22.25,
-      "atc_7d": 9,
-      "status": "effective"
-    },
-    {
-      "adset": "13/03/2026_DPA:Performance Long Sleeves",
-      "spend_7d": 78.29,
-      "purchases_7d": 3,
-      "conv_value_7d": 186.97,
-      "roas_7d": 2.39,
-      "cpa_7d": 26.1,
-      "atc_7d": 19,
-      "status": "effective"
-    },
-    {
       "adset": "11/03/2026_DL031K",
       "spend_7d": 71.81,
       "purchases_7d": 3,
@@ -958,16 +938,6 @@
       "roas_7d": 3.06,
       "cpa_7d": 23.94,
       "atc_7d": 27,
-      "status": "effective"
-    },
-    {
-      "adset": "11/03/2026_DL007V",
-      "spend_7d": 57.34,
-      "purchases_7d": 2,
-      "conv_value_7d": 108.95,
-      "roas_7d": 1.9,
-      "cpa_7d": 28.67,
-      "atc_7d": 6,
       "status": "effective"
     },
     {
@@ -981,28 +951,8 @@
       "status": "effective"
     },
     {
-      "adset": "04/03/2026_DL001V",
-      "spend_7d": 15.27,
-      "purchases_7d": 0,
-      "conv_value_7d": 0.0,
-      "roas_7d": 0.0,
-      "cpa_7d": null,
-      "atc_7d": 0,
-      "status": "watch"
-    },
-    {
       "adset": "16/03/2026_DL007V_UGC1",
       "spend_7d": 15.03,
-      "purchases_7d": 0,
-      "conv_value_7d": 0.0,
-      "roas_7d": 0.0,
-      "cpa_7d": null,
-      "atc_7d": 0,
-      "status": "watch"
-    },
-    {
-      "adset": "18/03/2026_DL049K",
-      "spend_7d": 9.04,
       "purchases_7d": 0,
       "conv_value_7d": 0.0,
       "roas_7d": 0.0,
@@ -1039,46 +989,6 @@
       "cpa_7d": null,
       "atc_7d": 2,
       "status": "test"
-    },
-    {
-      "adset": "17/03/2026_DPA:Flex Hunting Hoodie",
-      "spend_7d": 18.0,
-      "purchases_7d": 0,
-      "conv_value_7d": 0.0,
-      "roas_7d": 0.0,
-      "cpa_7d": null,
-      "atc_7d": 3,
-      "status": "test"
-    },
-    {
-      "adset": "11/03/2026_DL033K",
-      "spend_7d": 0.0,
-      "purchases_7d": 0,
-      "conv_value_7d": 0.0,
-      "roas_7d": 0.0,
-      "cpa_7d": null,
-      "atc_7d": 0,
-      "status": "test"
-    },
-    {
-      "adset": "11/03/2026_DL032K",
-      "spend_7d": 0.0,
-      "purchases_7d": 0,
-      "conv_value_7d": 0.0,
-      "roas_7d": 0.0,
-      "cpa_7d": null,
-      "atc_7d": 0,
-      "status": "test"
-    },
-    {
-      "adset": "13/03/2026_DL008V",
-      "spend_7d": 39.94,
-      "purchases_7d": 0,
-      "conv_value_7d": 0.0,
-      "roas_7d": 0.0,
-      "cpa_7d": null,
-      "atc_7d": 0,
-      "status": "kill"
     }
   ],
   "weekly": [
@@ -1163,9 +1073,9 @@
     "note": "CM=0 when MER <= breakeven. MER = Net Revenue / Ad Spend (higher=better)"
   },
   "_meta": {
-    "updated_at": "2026-03-20 22:42 GMT+7",
+    "updated_at": "2026-03-20 23:11 GMT+7",
     "adset_window": "7d",
-    "adset_count": 15,
+    "adset_count": 6,
     "weekly_count": 8
   }
 }

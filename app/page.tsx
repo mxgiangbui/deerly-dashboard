@@ -609,8 +609,8 @@ export default function Dashboard() {
             <KpiCard label="Kill Candidates" value={String(killCount)}
               sub=">$20 spent, 0 ATC" highlight="red" />
             <KpiCard label="Effective Spend %" value={`${spendMix}%`}
-              sub={`Target: 70% · $${effectiveSpend.toFixed(0)} / $${totalAdsetSpend.toFixed(0)}`}
-              highlight={spendMix >= 60 ? "green" : spendMix >= 40 ? "amber" : "red"} />
+              sub={`Target: 80% · $${effectiveSpend.toFixed(0)} / $${totalAdsetSpend.toFixed(0)}`}
+              highlight={spendMix >= 75 ? "green" : spendMix >= 50 ? "amber" : "red"} />
             <KpiCard label="Total Adsets" value={String(adsets.length)}
               sub="Last 7 days active" />
           </div>
